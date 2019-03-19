@@ -158,7 +158,7 @@ func (ws *WSClient) subscribe(chid, chname string) (err error) {
 	go func(chid string) {
 		var imsg []interface{}
 		var wsupdate interface{}
-		var rmsg = make([]byte, 128)
+		var rmsg = make([]byte, 2048)
 
 		for {
 			select {
