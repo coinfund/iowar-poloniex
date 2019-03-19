@@ -7,6 +7,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/coinfund/orderbook"
 	"golang.org/x/net/websocket"
 )
 
@@ -182,6 +183,8 @@ func (ws *WSClient) subscribe(chid, chname string) (err error) {
 				continue
 			}
 
+			fmt.Printf("imsg: %v\n", orderbook.JSON(imsg))
+
 			arg, ok := imsg[0].(float64)
 			if !ok {
 				continue
@@ -295,6 +298,19 @@ func convertArgsToMarketUpdate(args []interface{}) (res []MarketUpdate, err erro
 		tradedatafield := NewTrade{}
 
 		switch vals[0].(string) {
+
+		// order book dump
+		case "i":
+			marketupdate.TypeUpdate = "OrderBookDump"
+
+			// get the data
+			data, ok := vals[1].(map[string]interface{})
+			if !ok {
+				return nil, fmt.Errorf("could not unmarshal data correctly")
+			}
+
+			marketupdate.Data = data["orderBook"]
+
 		case "o":
 			if vals[3].(string) == "0.00000000" {
 				marketupdate.TypeUpdate = "OrderBookRemove"
