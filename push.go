@@ -7,7 +7,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/coinfund/orderbook"
 	"golang.org/x/net/websocket"
 )
 
@@ -178,12 +177,12 @@ func (ws *WSClient) subscribe(chid, chname string) (err error) {
 				return
 			}
 
+			fmt.Printf("rmsg: %v\n", string(rmsg))
+
 			err = json.Unmarshal(rmsg[:read_len], &imsg)
 			if err != nil {
 				continue
 			}
-
-			fmt.Printf("imsg: %v\n", orderbook.JSON(imsg))
 
 			arg, ok := imsg[0].(float64)
 			if !ok {
